@@ -41,7 +41,7 @@ double _gaussian(Random r) {
   return sqrt(-2.0 * log(u1)) * cos(2 * pi * u2);
 }
 
-/// Simple thousands formatter without packages: 92350 → "92,350"
+
 String formatThousands(num x) {
   final s = x.toInt().toString();
   final buf = StringBuffer();
