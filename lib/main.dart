@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'core/rate_simulator.dart';
+import 'pages/home_page.dart';
 
 void main() {
   runApp(const SarafApp());
@@ -14,143 +14,46 @@ class SarafApp extends StatelessWidget {
       title: 'Saraf',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0F766E), // teal-ish
-          brightness: Brightness.dark,        // premium dark
-        ),
         useMaterial3: true,
-      ),
-      home: const SarafHomePage(),
-    );
-  }
-}
-
-class SarafHomePage extends StatefulWidget {
-  const SarafHomePage({super.key});
-
-  @override
-  State<SarafHomePage> createState() => _SarafHomePageState();
-}
-
-class _SarafHomePageState extends State<SarafHomePage> {
-  final sim = RateSimulator(initial: 90000);
-  final amountCtrl = TextEditingController();
-
-  String from = 'USD';
-  String to = 'LBP';
-  String resultText = 'Enter an amount to convert';
-
-  @override
-  void dispose() {
-    amountCtrl.dispose();
-    super.dispose();
-  }
-
-  void _convert() {
-    final amount = double.tryParse(amountCtrl.text);
-    if (amount == null) {
-      setState(() => resultText = 'Please enter a valid number');
-      return;
-    }
-    if (from == to) {
-      setState(() => resultText = 'No conversion needed.');
-      return;
-    }
-
-    final rate = sim.current;
-    if (from == 'USD' && to == 'LBP') {
-      final res = amount * rate;
-      setState(() => resultText =
-      '$amount USD ≈ ${formatThousands(res)} LBP @ ${formatThousands(rate)}');
-    } else {
-      final res = amount / rate;
-      setState(() => resultText =
-      '${formatThousands(amount)} LBP ≈ ${res.toStringAsFixed(4)} USD @ ${formatThousands(rate)}');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final rateLabel = '1 USD = ${formatThousands(sim.current)} LBP';
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Saraf — LBP Rate Simulator')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            Text(rateLabel,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: amountCtrl,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Amount',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _convert(),
-            ),
-            const SizedBox(height: 12),
-
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: from,
-                    items: const [
-                      DropdownMenuItem(value: 'USD', child: Text('USD')),
-                      DropdownMenuItem(value: 'LBP', child: Text('LBP')),
-                    ],
-                    onChanged: (v) => setState(() {
-                      from = v!;
-                      _convert();
-                    }),
-                    decoration: const InputDecoration(
-                      labelText: 'From',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: to,
-                    items: const [
-                      DropdownMenuItem(value: 'LBP', child: Text('LBP')),
-                      DropdownMenuItem(value: 'USD', child: Text('USD')),
-                    ],
-                    onChanged: (v) => setState(() {
-                      to = v!;
-                      _convert();
-                    }),
-                    decoration: const InputDecoration(
-                      labelText: 'To',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            FilledButton(
-              onPressed: _convert,
-              child: const Text('Convert'),
-            ),
-
-            const SizedBox(height: 16),
-            Text(resultText, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 24),
-
-            const Text(
-              'Disclaimer: Educational simulation only. Not financial advice.',
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-            ),
-          ],
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF14B8A6),   // teal accent
+          secondary: Color(0xFFF5C542), // gold accent
+          surface: Color(0xFF0F1316),
+          onSurface: Colors.white,
         ),
+        scaffoldBackgroundColor: const Color(0xFF0B0F11),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFF14191D),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFF27323A)),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color(0xFF14B8A6), width: 1.2),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          labelStyle: const TextStyle(color: Color(0xFFB8C3C9)),
+          hintStyle: const TextStyle(color: Color(0xFF88959C)),
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF14B8A6),
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+          ),
+        ),
+        cardTheme: CardTheme(
+          color: const Color(0xFF10161A),
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          margin: EdgeInsets.zero,
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      home: const HomePage(),
     );
   }
 }
